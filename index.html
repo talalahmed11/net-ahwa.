@@ -1,29 +1,87 @@
-<!DOCTYPE html>
-<html lang="eg">
-    <head>
-   <meta charset="UTF-8">
-   <title>kimoz</title>
-   <meta name="description" content="Free Web tutorials">
-   <meta name="keywords" content="padel , football">
-   <meta name="author" content="talal ahmed">
-   <meta name="viewport" content="width=device-width, initial-scale=0.7">
-   <link rel="stylesheet" href="net.css">
-    </head>
-    <body>
-    <header class="site-header">
-    <div class="logo-container">
-    <h1>Name</h1>
-    </div>
-    </header>
-    <div class="page-content">
-    <div class="container">
-      <h2>Enter the Wi-Fi code</h2>
-      <br>
-      <input type="text" id="codeInput" placeholder="Enter Wi-Fi code" required />
-      <div class="message" id="message"></div>
-      <button onclick="verifyCode()">verify Code</button>
-    </div>
-  </div>
-    
-    </body>
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>خلفية فل سكرين متجاوبة</title>
+    <style>
+      /* 1) ضبط الصفحة */
+      html, body { height: 100%; }
+      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+      /* 2) عنصر الخلفية يغطي الشاشة بالكامل على اللابتوب والموبايل */
+      .bg {
+        position: fixed; /* يثبت الخلفية وراء المحتوى */
+        inset: 0;        /* top/right/bottom/left: 0 */
+        background-image: url(""); /* ضع مسار صورة الديسكتوب */
+        background-position: center;  /* تمركز الصورة */
+        background-size: cover;       /* تغطية كاملة مع قص بسيط لو لزم */
+        background-repeat: no-repeat;
+        z-index: -2; 
+        background: url(img/WhatsApp\ Image\ 2025-07-17\ at\ 19.10.36_f316f9bd.jpg);            /* تحت كل شيء */
+      }
+
+      /* 3) طبقة نصف شفافة لونها #0d47a1 بنسبة 70% */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(13, 71, 161, 0.7); /* 70% شفافية */
+        z-index: -1;
+      }
+
+      /* 4) تبديل الصورة على الشاشات الصغيرة (اختياري) */
+      @media (max-width: 768px) {
+        .bg { background-image: url("bg-mobile.jpg"); /* ضع مسار صورة الموبايل */ }
+      }
+
+      /* 5) المحتوى فوق الخلفية */
+      .content {
+        min-height: 100vh; /* يجعل أول شاشة تملأ الارتفاع */
+        display: grid;
+        place-items: center; /* توسيط عمودي/أفقي */
+        padding: 24px;
+        color: #fff;
+        text-align: center;
+      }
+
+      .card {
+        backdrop-filter: blur(6px);             /* ضبابية خفيفة */
+        background: rgba(255,255,255,0.12);     /* خلفية شفافة للكارت */
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        padding: 24px 28px;
+        max-width: 640px;
+      }
+
+      .btn {
+        display: inline-block;
+        margin-top: 14px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,0.5);
+        background: rgba(255,255,255,0.18);
+        color: #fff;
+        text-decoration: none;
+      }
+      .btn:hover { background: rgba(255,255,255,0.28); }
+    </style>
+  </head>
+  <body>
+    <!-- خلفية متجاوبة تغطي الشاشة -->
+    <div class="bg" aria-hidden="true"></div>
+    <div class="overlay" aria-hidden="true"></div>
+
+    <!-- المحتوى -->
+    <main class="content">
+      <section class="card">
+        <h1>خلفية فل سكرين متجاوبة (Laptop & Mobile)</h1>
+        <p>
+          هذه الصفحة مثال عملي يجعل صورة الخلفية تغطي الشاشة بالكامل على جميع المقاسات
+          مع طبقة نصف شفافة بلون #0d47a1 بنسبة 70% فوقها.
+        </p>
+        <a class="btn" href="#">زر تجريبي</a>
+      </section>
+    </main>
+  </body>
 </html>
