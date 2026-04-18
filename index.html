@@ -1,87 +1,274 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>خلفية فل سكرين متجاوبة</title>
-    <style>
-      /* 1) ضبط الصفحة */
-      html, body { height: 100%; }
-      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
-      /* 2) عنصر الخلفية يغطي الشاشة بالكامل على اللابتوب والموبايل */
-      .bg {
-        position: fixed; /* يثبت الخلفية وراء المحتوى */
-        inset: 0;        /* top/right/bottom/left: 0 */
-        background-image: url(""); /* ضع مسار صورة الديسكتوب */
-        background-position: center;  /* تمركز الصورة */
-        background-size: cover;       /* تغطية كاملة مع قص بسيط لو لزم */
-        background-repeat: no-repeat;
-        z-index: -2; 
-        background: url(img/WhatsApp\ Image\ 2025-07-17\ at\ 19.10.36_f316f9bd.jpg);            /* تحت كل شيء */
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+  #loader-wrap {
+    background: #000;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+  }
+
+  .scanline {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,255,70,0.03) 3px,
+      rgba(0,255,70,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .title {
+    color: #00ff46;
+    font-size: 13px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+    opacity: 0.7;
+  }
+
+  .counter-box {
+    color: #00ff46;
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2rem;
+    letter-spacing: -2px;
+    transition: color 0.1s, text-shadow 0.1s;
+  }
+
+  .counter-box span {
+    font-size: 32px;
+    opacity: 0.5;
+    vertical-align: super;
+  }
+
+  .bar-wrap {
+    width: 100%;
+    height: 4px;
+    background: rgba(0,255,70,0.1);
+    border: 1px solid rgba(0,255,70,0.2);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: #00ff46;
+    width: 0%;
+    transition: width 0.05s linear;
+    box-shadow: 0 0 10px rgba(0,255,70,0.5);
+  }
+
+  .ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding: 0 1px;
+  }
+
+  .ticks span {
+    color: rgba(0,255,70,0.3);
+    font-size: 9px;
+  }
+
+  .status-text {
+    color: rgba(0,255,70,0.5);
+    font-size: 11px;
+    letter-spacing: 3px;
+    min-height: 16px;
+    margin-top: 1rem;
+  }
+
+  .done-msg {
+    color: #00ff46;
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    margin-top: 2rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+
+  .done-msg.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .flash {
+    background: rgba(255, 50, 50, 0.15) !important;
+  }
+
+  #loader-wrap.alarm-flash {
+    animation: alarmBg 0.4s infinite alternate;
+  }
+
+  @keyframes alarmBg {
+    from { background: #000; }
+    to   { background: #1a0000; }
+  }
+
+  .done-msg.alarm {
+    color: #ff3333;
+    animation: alarmText 0.4s infinite alternate;
+  }
+
+  @keyframes alarmText {
+    from { color: #ff3333; text-shadow: 0 0 20px rgba(255,50,50,0.8); }
+    to   { color: #ff9900; text-shadow: 0 0 30px rgba(255,150,0,0.8); }
+  }
+
+  .alarm-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 8px;
+    animation: shake 0.3s infinite;
+  }
+
+  @keyframes shake {
+    0%   { transform: rotate(-8deg); }
+    50%  { transform: rotate(8deg); }
+    100% { transform: rotate(-8deg); }
+  }
+</style>
+
+<div id="loader-wrap">
+  <div class="scanline"></div>
+  <div class="content">
+    <div class="title">SYSTEM BOOT</div>
+    <div class="counter-box" id="counter">100<span>%</span></div>
+    <div class="bar-wrap">
+      <div class="bar-fill" id="bar"></div>
+    </div>
+    <div class="ticks">
+      <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+    </div>
+    <div class="status-text" id="status">INITIALIZING...</div>
+    <div class="done-msg" id="done-msg">
+      <span class="alarm-icon" id="alarm-icon" style="display:none">🚨</span>
+      SYSTEM HACKED BY T911
+    </div>
+  </div>
+</div>
+
+<script>
+  const counter  = document.getElementById('counter');
+  const bar      = document.getElementById('bar');
+  const statusEl = document.getElementById('status');
+  const doneMsg  = document.getElementById('done-msg');
+  const wrap     = document.getElementById('loader-wrap');
+  const alarmIcon= document.getElementById('alarm-icon');
+
+  const messages = [
+    'INITIALIZING...','LOADING MODULES...','CHECKING MEMORY...',
+    'BOOT SEQUENCE...','ALMOST THERE...','FINALIZING...'
+  ];
+
+  let audioCtx = null;
+
+  function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function playAlarm() {
+    const ctx = getAudioCtx();
+    const freqs = [880, 660, 880, 660, 880];
+    freqs.forEach((freq, i) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + i * 0.18;
+      gain.gain.setValueAtTime(0.3, start);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.15);
+      osc.start(start);
+      osc.stop(start + 0.16);
+    });
+  }
+
+  function showDone() {
+    statusEl.textContent = 'COMPLETE';
+    doneMsg.classList.add('show', 'alarm');
+    alarmIcon.style.display = 'block';
+    wrap.classList.add('alarm-flash');
+    playAlarm();
+
+    let alarmCount = 0;
+    const alarmRepeat = setInterval(() => {
+      alarmCount++;
+      playAlarm();
+      if (alarmCount >= 3) {
+        clearInterval(alarmRepeat);
+        setTimeout(() => {
+          wrap.classList.remove('alarm-flash');
+          doneMsg.classList.remove('alarm');
+          doneMsg.style.color = '#00ff46';
+          doneMsg.style.textShadow = '0 0 20px rgba(0,255,70,0.6)';
+          alarmIcon.style.display = 'none';
+          setTimeout(restart, 2500);
+        }, 1200);
+      }
+    }, 900);
+  }
+
+  function restart() {
+    doneMsg.classList.remove('show','alarm');
+    doneMsg.style.color = '';
+    doneMsg.style.textShadow = '';
+    alarmIcon.style.display = 'none';
+    wrap.classList.remove('alarm-flash');
+    setTimeout(runCount, 400);
+  }
+
+  function runCount() {
+    let current = 100;
+    let msgIdx  = 0;
+    bar.style.width = '0%';
+    statusEl.textContent = messages[0];
+    counter.innerHTML = '100<span>%</span>';
+
+    const interval = setInterval(() => {
+      current--;
+      bar.style.width = (100 - current) + '%';
+      counter.innerHTML = current + '<span>%</span>';
+
+      const pos = Math.floor((100 - current) / 17);
+      if (pos < messages.length && pos !== msgIdx) {
+        msgIdx = pos;
+        statusEl.textContent = messages[msgIdx];
       }
 
-      /* 3) طبقة نصف شفافة لونها #0d47a1 بنسبة 70% */
-      .overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(13, 71, 161, 0.7); /* 70% شفافية */
-        z-index: -1;
+      if (current <= 0) {
+        clearInterval(interval);
+        bar.style.width = '100%';
+        counter.innerHTML = '0<span>%</span>';
+        setTimeout(showDone, 300);
       }
+    }, 18);
+  }
 
-      /* 4) تبديل الصورة على الشاشات الصغيرة (اختياري) */
-      @media (max-width: 768px) {
-        .bg { background-image: url("bg-mobile.jpg"); /* ضع مسار صورة الموبايل */ }
-      }
-
-      /* 5) المحتوى فوق الخلفية */
-      .content {
-        min-height: 100vh; /* يجعل أول شاشة تملأ الارتفاع */
-        display: grid;
-        place-items: center; /* توسيط عمودي/أفقي */
-        padding: 24px;
-        color: #fff;
-        text-align: center;
-      }
-
-      .card {
-        backdrop-filter: blur(6px);             /* ضبابية خفيفة */
-        background: rgba(255,255,255,0.12);     /* خلفية شفافة للكارت */
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        padding: 24px 28px;
-        max-width: 640px;
-      }
-
-      .btn {
-        display: inline-block;
-        margin-top: 14px;
-        padding: 10px 18px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,0.5);
-        background: rgba(255,255,255,0.18);
-        color: #fff;
-        text-decoration: none;
-      }
-      .btn:hover { background: rgba(255,255,255,0.28); }
-    </style>
-  </head>
-  <body>
-    <!-- خلفية متجاوبة تغطي الشاشة -->
-    <div class="bg" aria-hidden="true"></div>
-    <div class="overlay" aria-hidden="true"></div>
-
-    <!-- المحتوى -->
-    <main class="content">
-      <section class="card">
-        <h1>خلفية فل سكرين متجاوبة (Laptop & Mobile)</h1>
-        <p>
-          هذه الصفحة مثال عملي يجعل صورة الخلفية تغطي الشاشة بالكامل على جميع المقاسات
-          مع طبقة نصف شفافة بلون #0d47a1 بنسبة 70% فوقها.
-        </p>
-        <a class="btn" href="#">زر تجريبي</a>
-      </section>
-    </main>
-  </body>
-</html>
+  runCount();
+</script>
